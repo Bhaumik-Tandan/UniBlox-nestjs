@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import UserSchema from './users.schema';
 import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectModel(UserSchema.name)
     private userModel: Model<typeof UserSchema>,
