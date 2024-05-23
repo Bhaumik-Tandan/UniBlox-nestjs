@@ -12,9 +12,9 @@ export class OrderController {
     return this.orderService.create(req["user"].id, discountCode);
   }
 
-  @Get("itemsCount")
-  getCountOfPurchaseItems(@Req() req: Request){
-    return this.orderService.getCountOfPurchaseItems(req["user"].id);
+  @Get("stats")
+  getStats(@Req() req: Request){
+    return this.orderService.getStats(req["user"].id);
   }
 
 }

@@ -92,18 +92,67 @@ export class OrderService {
 
     return order;
   }
-  async getCountOfPurchaseItems(userId) {
+
+  async getOrdersAndDiscounts(userId) {
     try {
-      const orders = await this.orderModel.find({ userId }).exec();
-      let totalItemsPurchased = 0;
-      orders.forEach(order => {
-        order.items.forEach(item => {
-          totalItemsPurchased += item.quantity;
-        });
-      });
-      return totalItemsPurchased;
+      const [orders, discounts] = await Promise.all([
+        this.orderModel.find({ userId }).exec(),
+        this.discountModel.find({ userId }).exec()
+      ]);
+      return { orders, discounts };
     } catch (error) {
-      console.error('Error getting count of items purchased:', error);
+      console.error('Error fetching orders and discounts:', error);
+      throw error;
+    }
+  }
+
+  async getTotalPurchaseAmount(orders) {
+    let totalPurchaseAmount = 0;
+    orders.forEach(order => {
+      totalPurchaseAmount += order.total;
+    });
+    return totalPurchaseAmount;
+  }
+
+  async getCountOfPurchaseItems(orders) {
+    let totalItemsPurchased = 0;
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        totalItemsPurchased += item.quantity;
+      });
+    });
+    return totalItemsPurchased;
+  }
+
+  async totalDiscountAmount(orders) {
+    let totalDiscountAmount = 0;
+    orders.forEach(order => {
+      if (order.discountId) {
+        const markedPrice = order.total / 0.9;
+        const discountAmount = markedPrice - order.total;
+        totalDiscountAmount += discountAmount;
+      }
+    });
+    return totalDiscountAmount;
+  }
+
+  async getStats(userId) {
+    try {
+      const { orders, discounts } = await this.getOrdersAndDiscounts(userId);
+      const [totalItemsPurchased, totalPurchaseAmount, totalDiscountAmount] = await Promise.all([
+        this.getCountOfPurchaseItems(orders),
+        this.getTotalPurchaseAmount(orders),
+        this.totalDiscountAmount(orders)
+      ]);
+
+      return {
+        totalItemsPurchased,
+        totalPurchaseAmount,
+        discountCodes: discounts,
+        totalDiscountAmount
+      };
+    } catch (error) {
+      console.error('Error getting stats:', error);
       throw error;
     }
   }
