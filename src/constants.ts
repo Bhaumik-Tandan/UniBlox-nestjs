@@ -1,0 +1,1 @@
+export const NUMBER_OF_ORDERS_FOR_DISCOUNT = 5;

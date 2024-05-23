@@ -6,13 +6,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CartitemsModule } from './cartitems/cartitems.module';
+import { OrderModule } from './order/order.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ['.env'], isGlobal: true }),
     MongooseModule.forRoot(process.env.DATABASE_URL),
     UserModule,
     AuthModule,
-    CartitemsModule
+    CartitemsModule,
+    OrderModule
   ],
   controllers: [AppController],
   providers: [AppService],
