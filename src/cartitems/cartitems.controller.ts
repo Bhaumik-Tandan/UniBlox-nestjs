@@ -13,4 +13,9 @@ export class CartitemsController {
     return this.cartitemsService.create(createCartitemDto);
   }
 
+  @Delete(':id')
+  remove(@Param('id') id: string,@Req() req: Request){
+    return this.cartitemsService.remove(id,req["user"].id);
+  }
+
 }

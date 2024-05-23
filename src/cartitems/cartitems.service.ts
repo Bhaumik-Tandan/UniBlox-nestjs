@@ -14,4 +14,8 @@ export class CartitemsService {
     return createdCartItem.save();
   }
 
+  async remove(id: string,userId: string) {
+    return await this.cartItemModel.deleteOne({ _id: id, userId }).exec();
+  }
+
 }
