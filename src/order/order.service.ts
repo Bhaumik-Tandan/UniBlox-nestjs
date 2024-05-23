@@ -68,26 +68,43 @@ export class OrderService {
         quantity: item.quantity
       };
     });
+    const orderObject={
+      userId,
+      items,
+      total
+    };
     if(discountCode) {
       const discount = await this.discountModel.findOne({ code: discountCode, used: false,userId }).exec();
       if (!discount) {
         throw new Error('Invalid discount code');
       }
-      total = total * 0.9;
+      orderObject["total"] = total * 0.9;
+      orderObject["discountId"] = discount._id;
       discount.used = true;
       await discount.save();
     }
 
-    const order = new this.orderModel({
-      userId,
-      items,
-      total
-    });
+    const order = new this.orderModel(orderObject);
 
     await order.save();
 
     await this.cartItemModel.deleteMany({ userId }).exec();
 
     return order;
+  }
+  async getCountOfPurchaseItems(userId) {
+    try {
+      const orders = await this.orderModel.find({ userId }).exec();
+      let totalItemsPurchased = 0;
+      orders.forEach(order => {
+        order.items.forEach(item => {
+          totalItemsPurchased += item.quantity;
+        });
+      });
+      return totalItemsPurchased;
+    } catch (error) {
+      console.error('Error getting count of items purchased:', error);
+      throw error;
+    }
   }
 }
