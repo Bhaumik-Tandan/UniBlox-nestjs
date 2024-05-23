@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import CartitemsSchema from 'src/cartitems/cartitems.schema';
 import ProductSchema from 'src/utility/seedData';
+import DiscountSchema from 'src/discount/discount.schema';
 
 @UseGuards(new JwtAuthGuard('jwt'))
 @Injectable()
@@ -27,10 +28,16 @@ export class OrderService {
     private productModel: Model< {
       _id: string;
       price: number;
-    }>
+    }>,
+    @InjectModel(DiscountSchema.name)
+    private discountModel: Model< {
+      userId: ObjectId;
+      code: number;
+      used: boolean;
+    }>,
   ) {}
 
-  async create(userId: string) {
+  async create(userId: string, discountCode?: number) {
     const cartItems = await this.cartItemModel.find({ userId }).exec();
 
     if (!cartItems.length) {
@@ -61,6 +68,15 @@ export class OrderService {
         quantity: item.quantity
       };
     });
+    if(discountCode) {
+      const discount = await this.discountModel.findOne({ code: discountCode, used: false,userId }).exec();
+      if (!discount) {
+        throw new Error('Invalid discount code');
+      }
+      total = total * 0.9;
+      discount.used = true;
+      await discount.save();
+    }
 
     const order = new this.orderModel({
       userId,

@@ -8,8 +8,8 @@ export class OrderController {
 
   @UseGuards(new JwtAuthGuard('jwt'))
   @Post()
-  create(@Req() req: Request) {
-    return this.orderService.create(req["user"].id);
+  create(@Req() req: Request, @Body() {discountCode}: any){
+    return this.orderService.create(req["user"].id, discountCode);
   }
 
 }
