@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
-  @Post()
+  @Get()
   create(@Req() req: Request) {
     return this.discountService.create(req["user"].id);
   }

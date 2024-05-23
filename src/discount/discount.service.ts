@@ -17,8 +17,13 @@ export class DiscountService {
     const numberOfOrders = await this.orderModel.countDocuments({ userId });
     if(numberOfOrders%NUMBER_OF_ORDERS_FOR_DISCOUNT === 0) {
       const code = Math.floor(1000 + Math.random() * 9000);
+      const existingDiscount = await this.discountModel.findOne({ userId, used: false });
+      if(existingDiscount) {
+        return `You already have a discount code: ${existingDiscount["code"]}`
+      }
       return this.discountModel.create({ userId, code,used:false});
     }
+    return `You currently have ${numberOfOrders} orders. You need ${NUMBER_OF_ORDERS_FOR_DISCOUNT - numberOfOrders%NUMBER_OF_ORDERS_FOR_DISCOUNT} more orders to get a discount.`
   }
 
 }
