@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CartitemsModule } from './cartitems/cartitems.module';
 import { OrderModule } from './order/order.module';
+import { DiscountModule } from './discount/discount.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ['.env'], isGlobal: true }),
@@ -14,7 +15,8 @@ import { OrderModule } from './order/order.module';
     UserModule,
     AuthModule,
     CartitemsModule,
-    OrderModule
+    OrderModule,
+    DiscountModule
   ],
   controllers: [AppController],
   providers: [AppService],
