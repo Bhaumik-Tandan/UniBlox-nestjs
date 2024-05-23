@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { OrderService } from './order.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @UseGuards(new JwtAuthGuard('jwt'))
   @Post()
-  create(@Body() createOrderDto) {
-    return this.orderService.create(createOrderDto);
+  create(@Req() req: Request) {
+    return this.orderService.create(req["user"].id);
   }
 
 }

@@ -18,6 +18,9 @@ const ProductSchema = new Schema({
   },
 });
 
+
+export default { name: 'Product', schema: ProductSchema };
+
 const Product = model('Product', ProductSchema); // Create the Product model
 
 const productData = [
@@ -66,4 +69,4 @@ const seedProducts = async () => {
   } 
 };
 
-seedProducts();
+// seedProducts();
